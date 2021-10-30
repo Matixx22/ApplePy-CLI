@@ -27,4 +27,3 @@ def cli():
 #         click.echo(f"Hello {name}!")
 
 cli.add_command(open_file.open)
-    
