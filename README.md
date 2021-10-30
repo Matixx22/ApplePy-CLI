@@ -3,9 +3,8 @@ Python packet sniffer and analyzer built with Click.
 
 # Installation
 
-Ater cloning a repository run:
-
 ```{bash}
+git clone https://github.com/Matixx22/ApplePy-CLI.git
 cd ApplePy-CLI
 pip install -r requirenments.txt
 pip install --editable .
