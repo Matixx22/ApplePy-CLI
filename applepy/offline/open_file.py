@@ -8,7 +8,9 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
-@click.option('-i', '--index', help="Packet's index counting from 0. If not specified then displaying all the packets", type=int)
+@click.option('-i', '--index', help="""Packet's index counting from 0.
+                                       If not specified then displaying all the packets.
+                                       If used with filter flag, takes an index of filtered packets""", type=int)
 @click.option('-f', '--filter', help='Applies filter to displayed packets', type=str)
 @click.argument('file', type=click.File('rb'))
 def open_pcap(index, file, filter):
