@@ -3,28 +3,12 @@ import click
 from .offline import open_file
 
 
-@click.group()
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+@click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
     pass
 
 
-# @cli.command()
-# def check_if_kacper_nie_zda():
-#     """This command checks if Kacper nie zda"""
-#     click.echo('Kacper nie zda')
-
-
-# @cli.command()
-# def dropdb():
-#     click.echo('Dropped the database')
-
-
-# @cli.command()
-# @click.option('--count', default=1, help='number of greetings')
-# @click.argument('name')
-# def hello(count, name):
-#     for x in range(count):
-#         click.echo(f"Hello {name}!")
-
-cli.add_command(open_file.open)
-    
+cli.add_command(open_file.open_pcap)

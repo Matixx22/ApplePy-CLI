@@ -1,16 +1,39 @@
 import click
-import pyshark
-from scapy.all import *
+from click.exceptions import ClickException
+from scapy.all import sniff
+from scapy.error import Scapy_Exception
 
 
-@click.command()
-@click.option('-i', '--index', required=True, help="Packet's index counting from 0", type=int)
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+@click.command(context_settings=CONTEXT_SETTINGS)
+@click.option('-i', '--index', help="""Packet's index counting from 0.
+                                       If not specified then displaying all the packets.
+                                       If used with filter flag, takes an index of filtered packets""", type=int)
+@click.option('-f', '--filter', help='Applies filter to displayed packets', type=str)
 @click.argument('file', type=click.File('rb'))
-def open(index, file):
-    """Loads the given file"""
+def open_pcap(index, file, filter):
+    """
+    Displays a packet capture file
 
-    # TODO: Check file extensions and hundreds of other things
+    FILE is a packet capture file to be displayed
+    """
 
-    packtes = pyshark.FileCapture(file)
+    try:
+        # Loads packet capture file
+        packets = sniff(offline=file, filter=filter)
 
-    click.echo(packtes[index])
+        if index is None:
+            click.echo(packets.nsummary())
+        else:
+            if index < 0 or index >= len(packets):
+                raise ClickException(
+                    f'There is no packet with the given index. Index range 0-{len(packets)-1}')
+
+            click.echo(f'Packet #{str(index)}')
+            click.echo(packets[index].show())
+
+    except Scapy_Exception as e:
+        click.echo(e)
+        exit(1)
