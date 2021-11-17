@@ -1,3 +1,6 @@
 hello
 hi
 bonjour
+halo
+aloha
+gutentag
