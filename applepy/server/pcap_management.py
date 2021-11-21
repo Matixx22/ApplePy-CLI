@@ -3,6 +3,7 @@ import time
 from ifcfg import interfaces
 from typing import Optional
 from fastapi import BackgroundTasks, FastAPI
+from fastapi.responses import FileResponse
 from scapy.all import sniff, wrpcap
 from pydantic import BaseModel
 from os import listdir
@@ -17,12 +18,12 @@ class CaptureConfig(BaseModel):
 
 
 @app.get("/")
-def read_root():
+async def read_root():
     return {"Hello": "World"}
 
 
 @app.get("/network-config")
-def get_network_config():
+async def get_network_config():
     return {"network_config": interfaces()}
 
 
@@ -35,9 +36,16 @@ async def start_packet_capture(cap_conf: CaptureConfig, bg_tasks: BackgroundTask
 
 
 @app.get('/pcaps')
-def get_pcap_files():
+async def get_pcap_files():
     pcaps = listdir('pcaps')
     return {'pcap_files': pcaps}
+
+
+@app.get('/pcaps/{file_id}', response_class=FileResponse)
+async def get_pcap_file(file_id: int):
+    pcaps = listdir('pcaps')
+    pcap_to_download = f'pcaps/{pcaps[file_id]}'
+    return pcap_to_download
 
 
 def sniff_packets(iface, count, filter):
