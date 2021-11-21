@@ -7,9 +7,9 @@ url = 'http://127.0.0.1:8000/'
 
 # POST /packet-capture
 r = requests.post(url + 'packet-capture', json={
-    'count': 10,
+    'count': 50,
     'iface': 'ens33',
-    'filter': 'tcp'
+    'filter': ''
 })
 
 print(r.text)

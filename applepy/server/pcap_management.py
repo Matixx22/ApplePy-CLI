@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import FastAPI
 from scapy.all import sniff, wrpcap
 from pydantic import BaseModel
+from os import listdir
 
 app = FastAPI()
 
@@ -33,6 +34,12 @@ def start_packet_capture(cap_conf: CaptureConfig):
     process.start()
 
     return {'status': 'sent'}
+
+
+@app.get('/pcaps')
+def get_pcap_files():
+    pcaps = listdir('pcaps')
+    return {'pcap_files': pcaps}
 
 
 def sniff_packets(iface, count, filter):
