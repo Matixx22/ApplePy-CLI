@@ -1,9 +1,8 @@
 import time
-import multiprocessing
 
 from ifcfg import interfaces
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import BackgroundTasks, FastAPI
 from scapy.all import sniff, wrpcap
 from pydantic import BaseModel
 from os import listdir
@@ -28,12 +27,11 @@ def get_network_config():
 
 
 @app.post("/packet-capture")
-def start_packet_capture(cap_conf: CaptureConfig):
-    process = multiprocessing.Process(
-        target=sniff_packets, args=(cap_conf.iface, cap_conf.count, cap_conf.filter,))
-    process.start()
+async def start_packet_capture(cap_conf: CaptureConfig, bg_tasks: BackgroundTasks):
+    bg_tasks.add_task(sniff_packets,
+                      cap_conf.iface, cap_conf.count, cap_conf.filter)
 
-    return {'status': 'sent'}
+    return {'status': 'task sent'}
 
 
 @app.get('/pcaps')
