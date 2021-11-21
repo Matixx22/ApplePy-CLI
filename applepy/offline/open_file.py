@@ -1,4 +1,5 @@
 import click
+import re
 from click.exceptions import ClickException
 from scapy.all import sniff
 from scapy.error import Scapy_Exception
@@ -37,3 +38,31 @@ def open_pcap(index, file, filter):
     except Scapy_Exception as e:
         click.echo(e)
         exit(1)
+
+
+@click.command(context_settings=CONTEXT_SETTINGS)
+@click.option('-g', '--grep', help='Applies grep filter to displayed content', type=str)
+@click.option('-r', '--regex', help='Applies regular expresion filter to displayed content', type=str)
+@click.argument('file', type=click.File('r'))
+def open_txt(file, grep, regex):
+    """
+    Displays a txt file
+
+    FILE is a txt file to be displayed
+    """
+
+    # TODO: Nie wiem jak rozroznic grepa od re, nie dziala \
+
+    for line in file:
+        if grep is None and regex is None:
+            click.echo(line, nl=False)
+        elif grep is not None and regex is None:
+            if re.findall(grep, line):
+                click.echo(line, nl=False)
+        elif grep is None and regex is not None:
+            user_regex = re.compile(regex)
+            # print(type(user_regex))
+            if re.findall(user_regex, line):
+                click.echo(line, nl=False)
+        else:
+            click.echo('Apply only one filter')
