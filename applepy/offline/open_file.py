@@ -1,7 +1,6 @@
 import click
 import re
 from click.exceptions import ClickException
-from applepy.save_to_log import echo
 from scapy.all import sniff
 from scapy.error import Scapy_Exception
 
@@ -27,17 +26,17 @@ def open_pcap(index, file, filter):
         packets = sniff(offline=file, filter=filter)
 
         if index is None:
-            echo(packets.nsummary())
+            click.echo(packets.nsummary())
         else:
             if index < 0 or index >= len(packets):
                 raise ClickException(
-                    f'There is no packet with the given index. Index range 0-{len(packets) - 1}')
+                    f'There is no packet with the given index. Index range 0-{len(packets)-1}')
 
-            echo(f'Packet #{str(index)}')
-            echo(packets[index].show())
+            click.echo(f'Packet #{str(index)}')
+            click.echo(packets[index].show())
 
     except Scapy_Exception as e:
-        echo(e)
+        click.echo(e)
         exit(1)
 
 
@@ -56,43 +55,14 @@ def open_txt(file, grep, regex):
 
     for line in file:
         if grep is None and regex is None:
-            echo(line, nl=False)
+            click.echo(line, nl=False)
         elif grep is not None and regex is None:
-            if re.search(grep, line):
-                echo(line, nl=False)
+            if re.findall(grep, line):
+                click.echo(line, nl=False)
         elif grep is None and regex is not None:
             user_regex = re.compile(regex)
             # print(type(user_regex))
             if re.findall(user_regex, line):
-                echo(line, nl=False)
+                click.echo(line, nl=False)
         else:
-            echo('Apply only one filter')
-
-
-@click.command(context_settings=CONTEXT_SETTINGS)
-@click.option('-g', '--grep', help='Applies grep filter to displayed content', type=str)
-@click.option('-r', '--regex', help='Applies regular expresion filter to displayed content', type=str)
-@click.argument('file', type=click.File('r'))
-def open_evtx(file, grep, regex):
-    """
-    Displays a evtx file
-
-    FILE is a evtx file to be displayed
-    """
-
-    # for line in file:
-    #     if grep is None and regex is None:
-    #         click.echo(line, nl=False)
-    #     elif grep is not None and regex is None:
-    #         if re.search(grep, line):
-    #             click.echo(line, nl=False)
-    #     elif grep is None and regex is not None:
-    #         user_regex = re.compile(regex)
-    #         # print(type(user_regex))
-    #         if re.findall(user_regex, line):
-    #             click.echo(line, nl=False)
-    #     else:
-    #         click.echo('Apply only one filter')
-
-
-
+            click.echo('Apply only one filter')
