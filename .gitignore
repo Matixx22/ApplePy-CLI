@@ -7,7 +7,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-./applepy/logs
+applepy/logs/
 
 # C extensions
 *.so

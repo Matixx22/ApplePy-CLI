@@ -13,9 +13,8 @@ def save_to_log(data):
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
-    print("log: " + str(data))
     with open(filename, "a+") as log:
-        log.write(str(datetime.now()) + " > " + str(data) + "\n")
+        log.write(str(datetime.now()) + " > " + str(data))
 
 
 def echo(text, nl=False):

@@ -28,7 +28,7 @@ def open_pcap(index, file, filter):
 
         if index is None:
             for i, res in enumerate(packets.res):
-                echo(str(i) + " " + str(res.summary()))
+                echo(str(i) + " " + str(res.summary()) + "\n")
             pass
         else:
             if index < 0 or index >= len(packets):
