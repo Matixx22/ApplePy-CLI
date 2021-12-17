@@ -20,7 +20,6 @@ def open_pcap(index, file, filter):
 
     FILE is a packet capture file to be displayed
     """
-
     try:
         # Loads packet capture file
         packets = sniff(offline=file, filter=filter)
