@@ -5,7 +5,7 @@ SERVER_ADDRESS = "http://127.0.0.1:5000"
 
 if __name__ == '__main__':
     address_input = input("Enter server IP address (default http://127.0.0.1:5000): ")
-    if address_input is not "":
+    if address_input != "":
         SERVER_ADDRESS = address_input
     while True:
         option = input("Welcome\n[1] Show alerts\n[0] Leave\n >")
