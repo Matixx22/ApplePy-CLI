@@ -22,4 +22,4 @@ def cli():
 
 
 cli.add_command(open_file.open_pcap)
-cli.add_command(open_file.open_txt)
+cli.add_command(open_file.open_text)
