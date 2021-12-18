@@ -1,7 +1,12 @@
 import click
 from scapy.utils import PcapReader
-
+from flask import Flask, json
 from applepy.save_to_log import echo
+
+api = Flask(__name__)
+
+block = False
+desc = ""
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 C2_IP_LIST = ["128.61.240.205"]
@@ -124,5 +129,15 @@ def detect(filenames, rule):
     print(output[0][2])
     for action_alert, action_block, description in output:
         echo(description)
+        if action_alert == "remote":
+            global block
+            block = action_block
+            global desc
+            desc = description
+            api.run()
 
+
+@api.route('/', methods=['GET'])
+def get_companies():
+  return json.dumps([block, desc.split("\n")])
 
