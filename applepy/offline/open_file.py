@@ -44,11 +44,11 @@ def open_pcap(index, file, filter):
 @click.option('-g', '--grep', help='Applies grep filter to displayed content', type=str)
 @click.option('-r', '--regex', help='Applies regular expresion filter to displayed content', type=str)
 @click.argument('file', type=click.File('r'))
-def open_txt(file, grep, regex):
+def open_text(file, grep, regex):
     """
-    Displays a txt file
+    Displays a text file including .txt, .xml .json
 
-    FILE is a txt file to be displayed
+    FILE is a file to be displayed
     """
 
     # TODO: Nie wiem jak rozroznic grepa od re, nie dziala \
