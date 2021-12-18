@@ -1,8 +1,10 @@
 import click
 import re
+import Evtx.Evtx as evtx
 from click.exceptions import ClickException
 from scapy.all import sniff
 from scapy.error import Scapy_Exception
+from collections import OrderedDict
 from applepy.save_to_log import echo
 
 
@@ -69,3 +71,31 @@ def open_text(file, grep, regex):
                 echo(line, nl=False)
         else:
             echo('Apply only one filter')
+
+@click.command(context_settings=CONTEXT_SETTINGS)
+@click.argument('file', type=click.Path(exists=True))
+def open_evtx(file):
+    """
+    Displays an evtx file
+
+    FILE is an evtx file to be displayed
+    """
+
+    with evtx.Evtx(file) as open_log:
+        header = open_log.get_file_header()
+        properties = OrderedDict(
+            [
+                ("major_version", "File version (major)"),
+                ("minor_version", "File version (minor)"),
+                ("is_dirty", "File is dirty"),
+                ("is_full", "File is full"),
+                ("next_record_number", "Next record number"),
+            ]
+        )
+
+        for key, value in properties.items():
+            echo(f"{value}: {getattr(header, key)()}")
+
+        for record in open_log.records():
+            echo(record.xml())
+
