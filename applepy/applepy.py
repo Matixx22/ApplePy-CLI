@@ -2,9 +2,10 @@ import sys
 
 import click
 
-from .offline import open_file
+from .offline import open_file, detection_rules
 import applepy.globals
 from applepy.save_to_log import save_to_log
+
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -24,3 +25,4 @@ def cli():
 cli.add_command(open_file.open_pcap)
 cli.add_command(open_file.open_text)
 cli.add_command(open_file.open_evtx)
+cli.add_command(detection_rules.detect)
