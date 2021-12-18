@@ -1,6 +1,8 @@
 import click
 from scapy.utils import PcapReader
 
+from applepy.save_to_log import echo
+
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 C2_IP_LIST = ["128.61.240.205"]
 
@@ -120,6 +122,7 @@ def detect(filenames, rule):
         output.append(_find_virus(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
 
     print(output[0][2])
-    # TODO save to log ale nie mam go na tym branchu
+    for action_alert, action_block, description in output:
+        echo(description)
 
 

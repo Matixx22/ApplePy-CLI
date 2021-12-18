@@ -5,6 +5,7 @@ import applepy.globals
 from datetime import datetime
 import sqlite3
 
+
 def save_to_log(data):
     filename = "logs/" + str(applepy.globals.TIME)
     if not os.path.exists(os.path.dirname(filename)):
@@ -15,6 +16,7 @@ def save_to_log(data):
                 raise
     with open(filename, "a+") as log:
         log.write(str(datetime.now()) + " > " + str(data))
+
 
 def _save_to_db(data):
     cursor = applepy.globals.con
