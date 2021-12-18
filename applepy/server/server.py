@@ -60,7 +60,7 @@ async def get_pcap_file(file_id: int):
 
 def sniff_packets(iface, count, filter):
     pcap = sniff(count=count, iface=iface, filter=filter)
-    wrpcap(f'pcaps/packet_capture_{str(time.time()).replace(".", "_")}', pcap)
+    wrpcap(f'pcaps/packet_capture_{str(time.time()).replace(".", "_")}.pcap', pcap)
     return
 
 # LOG
