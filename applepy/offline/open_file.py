@@ -94,7 +94,7 @@ def open_evtx(file):
         )
 
         for key, value in properties.items():
-            echo(f"{value}: {getattr(header, key)()}")
+            echo(f"{value}: {getattr(header, key)()}\n")
 
         for record in open_log.records():
             echo(record.xml())
