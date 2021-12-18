@@ -1,6 +1,6 @@
 import click
 
-from .offline import open_file
+from .offline import open_file, detection_rules
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -13,3 +13,5 @@ def cli():
 
 cli.add_command(open_file.open_pcap)
 cli.add_command(open_file.open_txt)
+cli.add_command(detection_rules.detect)
+
