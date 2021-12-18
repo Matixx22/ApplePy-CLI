@@ -3,7 +3,7 @@ import os
 import errno
 import applepy.globals
 from datetime import datetime
-
+import sqlite3
 
 def save_to_log(data):
     filename = "logs/" + str(applepy.globals.TIME)
@@ -16,7 +16,13 @@ def save_to_log(data):
     with open(filename, "a+") as log:
         log.write(str(datetime.now()) + " > " + str(data))
 
+def _save_to_db(data):
+    cursor = applepy.globals.con
+    cursor.execute("INSERT INTO logs VALUES ('{0}', '{1}')".format(str(datetime.now()), str(data).replace("'", '"')))
+    cursor.commit()
+
 
 def echo(text, nl=False):
     click.echo(text, nl=nl)
     save_to_log(text)
+    _save_to_db(text)
