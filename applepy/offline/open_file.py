@@ -3,6 +3,7 @@ import re
 from click.exceptions import ClickException
 from scapy.all import sniff
 from scapy.error import Scapy_Exception
+from applepy.save_to_log import echo
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -26,17 +27,19 @@ def open_pcap(index, file, filter):
         packets = sniff(offline=file, filter=filter)
 
         if index is None:
-            click.echo(packets.nsummary())
+            for i, res in enumerate(packets.res):
+                echo(str(i) + " " + str(res.summary()) + "\n")
+            pass
         else:
             if index < 0 or index >= len(packets):
                 raise ClickException(
                     f'There is no packet with the given index. Index range 0-{len(packets)-1}')
 
-            click.echo(f'Packet #{str(index)}')
-            click.echo(packets[index].show())
+            echo(f'Packet #{str(index)}')
+            echo(packets[index].show())
 
     except Scapy_Exception as e:
-        click.echo(e)
+        echo(e)
         exit(1)
 
 
@@ -55,14 +58,14 @@ def open_txt(file, grep, regex):
 
     for line in file:
         if grep is None and regex is None:
-            click.echo(line, nl=False)
+            echo(line, nl=False)
         elif grep is not None and regex is None:
             if re.findall(grep, line):
-                click.echo(line, nl=False)
+                echo(line, nl=False)
         elif grep is None and regex is not None:
             user_regex = re.compile(regex)
             # print(type(user_regex))
             if re.findall(user_regex, line):
-                click.echo(line, nl=False)
+                echo(line, nl=False)
         else:
-            click.echo('Apply only one filter')
+            echo('Apply only one filter')
