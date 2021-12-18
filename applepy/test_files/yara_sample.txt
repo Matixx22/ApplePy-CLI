@@ -1,0 +1,2 @@
+UWAGA!!! ten plik to virus, uruchamia się w qemu, na vboxie z vbocguestadditions, lub vmware.
+Korzysta z metstats.exe i czegoś tam jeszcze XD
