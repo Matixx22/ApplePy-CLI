@@ -6,12 +6,14 @@ class YaraEngine():
         
         rules = yara.compile(filepaths=rules)
 
-
         with open(file, 'rb') as file:
             file_content = file.read()
 
             matches = rules.match(data=file_content)
             # print(matches.rule)
 
+            rule_match = ''
             for match in matches:
-                print(match.rule, match.meta, match.strings)
+                rule_match += f'{match.rule}, {match.meta}, {match.strings}\n'
+                
+            return rule_match

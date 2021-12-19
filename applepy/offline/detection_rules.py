@@ -1,5 +1,6 @@
 import click
 from scapy.utils import PcapReader
+from applepy.offline.yara_engine import YaraEngine
 from flask import Flask, json
 from applepy.save_to_log import echo
 
@@ -93,9 +94,50 @@ def _find_virus(**kwargs):
     return action_alert, action_block, description
 
 
+def _detect_sus_file(**kwargs):
+    # ciało funkcji - właściwa reguła operująca na danych z args
+
+    description = ""
+    rules = {
+        'sus_strings': 'yara-rules/suspicious_strings.yar'
+    }
+
+    # procesowanie pcap
+    for pcap in kwargs['pcap']:
+        description = YaraEngine.detect(rules=rules, file=pcap)
+
+    # # procesowanie evtx
+    for evtx in kwargs['evtx']:
+        description = YaraEngine.detect(rules=rules, file=evtx)
+
+    # # procesowanie xml
+    for xml in kwargs['xml']:
+        description = YaraEngine.detect(rules=rules, file=xml)
+
+    # # procesowanie json
+    for json in kwargs['json']:
+        description = YaraEngine.detect(rules=rules, file=json)
+
+    # # procesowanie txt
+    for txt in kwargs['txt']:
+        description = YaraEngine.detect(rules=rules, file=txt)
+
+    # ostateczna reguła - tj. co ma się wykonać
+    if len(description) > 0:
+        action_alert = "local"
+        action_block = True
+        description = description
+    else:
+        action_alert = None
+        action_block = None
+        description = None
+    return action_alert, action_block, description
+
+
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.option('-f', '--filenames', help='path to files to analyze', multiple=True)
-@click.option('-r', '--rule', help='Specify rule. If leave empty all rules are applied', type=str)
+@click.option('-r', '--rule', help='Specify rule. If leave empty all rules are applied.\
+                                    Available rules: c2-ip, virus, sus-file', type=str)
 # @click.argument('filenames', multiple=True)
 def detect(filenames, rule):
     pcap = []
@@ -121,10 +163,13 @@ def detect(filenames, rule):
     if rule is None:
         output.append(_find_virus(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
         output.append(_find_c2_ip(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
+        output.append(_detect_sus_file(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
     if rule == "c2-ip":
         output.append(_find_c2_ip(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
     if rule == "virus":
         output.append(_find_virus(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
+    if rule == "sus-file":
+        output.append(_detect_sus_file(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
 
     print(output[0][2])
     for action_alert, action_block, description in output:
@@ -139,5 +184,4 @@ def detect(filenames, rule):
 
 @api.route('/', methods=['GET'])
 def get_companies():
-  return json.dumps([block, desc.split("\n")])
-
+    return json.dumps([block, desc.split("\n")])

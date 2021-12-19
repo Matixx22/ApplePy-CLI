@@ -3,7 +3,6 @@ import os
 import errno
 import applepy.globals
 from datetime import datetime
-import sqlite3
 
 
 def save_to_log(data):
