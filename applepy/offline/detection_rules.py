@@ -1,4 +1,5 @@
 import click
+import pandas as pd
 from scapy.utils import PcapReader
 from applepy.offline.yara_engine import YaraEngine
 from flask import Flask, json
@@ -134,6 +135,38 @@ def _detect_sus_file(**kwargs):
     return action_alert, action_block, description
 
 
+def _detect_sus_ports(**kwargs):
+    description = ''
+    # procesowanie pcap
+    for csv in kwargs['csv']:
+        df = pd.read_csv(csv)
+        df1 = df.groupby('Source')['Info'].count()
+        df1.to_frame().reset_index()
+        sus_ips = []
+        sus_ips = df1.nlargest(round(len(df1.index)/2)).reset_index()['Source'].values[:]
+        sus_ports = []
+
+        for sus_ip in sus_ips:
+            df_sus = df[df['Source'] == sus_ip]
+            df_sus['Src port'] = df_sus['Info'].str.extract(r'(^\d*)')
+            df_sus2 = df_sus.groupby('Src port')['Info'].count()
+            sus_ports.append(df_sus2.reset_index().max().values[0])
+            
+        description = 'Common ports are ' + ', '.join(sus_ports) + '\n'
+
+    # ostateczna reguła - tj. co ma się wykonać
+    if len(description) > 0:
+        action_alert = "local"
+        action_block = True
+        description = description
+    else:
+        action_alert = None
+        action_block = None
+        description = None
+    return action_alert, action_block, description
+        
+
+
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.option('-f', '--filenames', help='path to files to analyze', multiple=True)
 @click.option('-r', '--rule', help='Specify rule. If leave empty all rules are applied.\
@@ -145,6 +178,7 @@ def detect(filenames, rule):
     xml = []
     json = []
     txt = []
+    csv = []
 
     output = []
 
@@ -160,16 +194,21 @@ def detect(filenames, rule):
             json.append(filename)
         if extension == "txt":
             txt.append(filename)
+        if extension == "csv":
+            csv.append(filename)
     if rule is None:
         output.append(_find_virus(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
         output.append(_find_c2_ip(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
         output.append(_detect_sus_file(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
+        output.append(_detect_sus_ports(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt, csv=csv))
     if rule == "c2-ip":
         output.append(_find_c2_ip(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
     if rule == "virus":
         output.append(_find_virus(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
     if rule == "sus-file":
         output.append(_detect_sus_file(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
+    if rule == "sus-ip":
+        output.append(_detect_sus_ports(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt, csv=csv))
 
     print(output[0][2])
     for action_alert, action_block, description in output:
