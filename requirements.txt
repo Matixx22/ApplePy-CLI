@@ -1,4 +1,5 @@
 anyio==3.3.4
+-e git+https://github.com/Matixx22/ApplePy-CLI@185141b3834bcd21c5c86073cdafeb23411de87e#egg=applepy
 asgiref==3.4.1
 autopep8==1.6.0
 backcall==0.2.0
@@ -10,6 +11,7 @@ cycler==0.11.0
 debugpy==1.5.1
 decorator==5.1.0
 entrypoints==0.3
+evtx==0.7.2
 fastapi==0.70.0
 flake8==4.0.1
 Flask==2.0.2
@@ -68,7 +70,7 @@ toml==0.10.2
 tomli==1.2.2
 tornado==6.1
 traitlets==5.1.1
-typing-extensions==4.0.0
+typing_extensions==4.0.0
 urllib3==1.26.7
 uvicorn==0.15.0
 uvloop==0.16.0
