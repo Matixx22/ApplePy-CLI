@@ -1,5 +1,4 @@
 anyio==3.3.4
--e git+https://github.com/Matixx22/ApplePy-CLI@185141b3834bcd21c5c86073cdafeb23411de87e#egg=applepy
 asgiref==3.4.1
 autopep8==1.6.0
 backcall==0.2.0
