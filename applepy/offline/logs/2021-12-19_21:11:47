@@ -1,3 +1,0 @@
-2021-12-19 21:11:47.268308 > /home/mateusz/krycy/ApplePy-CLI/venv/bin/applepy detect -f ../test_files/yara_sample.txt 
-2021-12-19 21:11:47.271576 > Found virus in file ../test_files/yara_sample.txt line 1!
-2021-12-19 21:11:47.313469 > None

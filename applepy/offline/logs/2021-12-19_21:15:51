@@ -1,2 +1,0 @@
-2021-12-19 21:15:51.965363 > /home/mateusz/krycy/ApplePy-CLI/venv/bin/applepy detect -f ../test_files/yara_sample.txt -r sus-file 
-2021-12-19 21:15:52.014237 > VMWare_Detection, {'description': 'Looks for VMWare presence', 'author': 'Cuckoo project'}, [(87, '$a1', b'vmware')]Qemu_Detection, {'description': 'Looks for Qemu presence'}, [(45, '$a0', b'qemu')]Misc_Suspicious_Strings, {'description': 'Miscellaneous malware strings', 'author': 'Ivan Kwiatkowski (@JusticeRage)'}, [(21, '$a1', b'virus')]
