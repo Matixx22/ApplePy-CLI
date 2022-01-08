@@ -1,3 +1,0 @@
-2021-12-19 21:17:16.678645 > /home/mateusz/krycy/ApplePy-CLI/venv/bin/applepy detect -f ../test_files/yara_sample.txt 
-2021-12-19 21:17:16.745665 > Found virus in file ../test_files/yara_sample.txt line 1!
-2021-12-19 21:17:16.818830 > None2021-12-19 21:17:16.830570 > VMWare_Detection, {'description': 'Looks for VMWare presence', 'author': 'Cuckoo project'}, [(87, '$a1', b'vmware')]Qemu_Detection, {'description': 'Looks for Qemu presence'}, [(45, '$a0', b'qemu')]Misc_Suspicious_Strings, {'description': 'Miscellaneous malware strings', 'author': 'Ivan Kwiatkowski (@JusticeRage)'}, [(21, '$a1', b'virus')]

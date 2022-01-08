@@ -1,2 +1,0 @@
-2021-12-19 23:30:54.977613 > /home/mateusz/krycy/ApplePy-CLI/venv/bin/applepy detect -f applepy/jupyter/data/pcaps.csv 
-2021-12-19 23:30:55.017341 > None2021-12-19 23:30:55.066885 > None2021-12-19 23:30:55.097071 > None2021-12-19 23:30:55.110450 > Common ports are 5985, 8443
