@@ -169,20 +169,6 @@ def _detect_sus_ports(**kwargs):
 
 def _find_python_process(**kwargs):
     description = ""
-    # ciało funkcji - właściwa reguła operująca na danych z args
-
-    # procesowanie pcap
-    # for pcap in kwargs[pcap]:
-
-    # procesowanie evtx
-    # for evtx in kwargs[evtx]:
-
-    # procesowanie xml
-    # for xml in kwargs["xml"]:
-
-    # procesowanie json
-    # for json in kwargs["json"]:
-
 
     # procesowanie txt
     for txt in kwargs["txt"]:
@@ -207,29 +193,48 @@ def _find_python_process(**kwargs):
 
 
 def _detect_dropbox_communication(**kwargs):
-    # ciało funkcji - właściwa reguła operująca na danych z args
     description = ""
     ip_list = ['162.125.66.14', '162.125.72.14']
+    index = 0
     # procesowanie pcap
     for pcap in kwargs["pcap"]:
         for packet in PcapReader(pcap):
             src_ip = packet["IP"].src
             dst_ip = packet["IP"].dst
             if src_ip in ip_list:
-                description += "Found packet from dropbox IP address " + src_ip + "!\n"
+                description += f"Found packet id {str(index)} from dropbox IP address " + src_ip + "!\n"
             if dst_ip in ip_list:
-                description += "Found packet to dropbox IP address " + dst_ip + "!\n"
-    # procesowanie evtx
-    # for evtx in kwargs[evtx]:
-    # procesowanie xml
-    # for xml in kwargs[xml]:
-    # procesowanie json
-    # for json in kwargs[json]:
-    # procesowanie txt
-    # for txt in kwargs[txt]:
+                description += f"Found packet id {str(index)} to dropbox IP address " + dst_ip + "!\n"
+            
+            index += 1
+
     # ostateczna reguła - tj. co ma się wykonać
     if len(description) > 0:
         action_alert = "remote"
+        action_block = True
+        description = description
+    else:
+        action_alert = None
+        action_block = None
+        description = None
+    return action_alert, action_block, description
+
+
+def _is_script_a_keylogger(**kwargs):
+    # ciało funkcji - właściwa reguła operująca na danych z args
+
+    description = ""
+    rules = {
+        'python_kelogger': 'applepy/offline/yara-rules/keylogger_python.yar'
+    }
+
+    # procesowanie py
+    for py in kwargs['py']:
+        description = YaraEngine.detect(rules=rules, file=py)
+
+    # ostateczna reguła - tj. co ma się wykonać
+    if len(description) > 0:
+        action_alert = "local"
         action_block = True
         description = description
     else:
@@ -251,6 +256,7 @@ def detect(filenames, rule):
     json = []
     txt = []
     csv = []
+    py = []
 
     output = []
 
@@ -268,6 +274,9 @@ def detect(filenames, rule):
             txt.append(filename)
         if extension == "csv":
             csv.append(filename)
+        if extension == "py":
+            py.append(filename)
+
     if rule is None:
         output.append(_find_virus(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
         output.append(_find_c2_ip(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
@@ -275,6 +284,7 @@ def detect(filenames, rule):
         output.append(_detect_sus_ports(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt, csv=csv))
         output.append(_find_python_process(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
         output.append(_detect_dropbox_communication(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
+        output.append(_is_script_a_keylogger(py=py))
     if rule == "c2-ip":
         output.append(_find_c2_ip(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
     if rule == "virus":
@@ -287,6 +297,8 @@ def detect(filenames, rule):
         output.append(_find_python_process(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
     if rule == "dropbox-communication":
         output.append(_detect_dropbox_communication(pcap=pcap, evtx=evtx, xml=xml, json=json, txt=txt))
+    if rule == "python-keylogger":
+        output.append(_is_script_a_keylogger(py=py))
 
     for action_alert, action_block, description in output:
         echo(description)
